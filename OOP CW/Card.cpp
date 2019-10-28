@@ -11,16 +11,16 @@
 using namespace std;
 
 Card::Card():value(0),secondValue(0){}
-Card::Card(int _value)
-    :value(_value),secondValue(0){}
-Card::Card(string _suit)
-    :suit(_suit),value(0),secondValue(0){}
-Card::Card(int _value, string _suit)
-    :value(_value),suit(_suit),secondValue(0){}
-Card::Card(string _cardNumber, string _suit, int _value)
-    :cardNumber(_cardNumber),suit(_suit),value(_value),secondValue(0){}
-Card::Card(string _cardNumber, string _suit, int _value, int _secondValue)
-    :cardNumber(_cardNumber),suit(_suit),value(_value),secondValue(_secondValue){}
+Card::Card(int value)
+    :value(value),secondValue(0){}
+Card::Card(string suit)
+    :suit(suit),value(0),secondValue(0){}
+Card::Card(int value, string suit)
+    :value(value),suit(suit),secondValue(0){}
+Card::Card(string cardNumber, string suit, int value)
+    :cardNumber(cardNumber),suit(suit),value(value),secondValue(0){}
+Card::Card(string cardNumber, string suit, int value, int secondValue)
+    :cardNumber(cardNumber),suit(suit),value(value),secondValue(secondValue){}
 
 int Card::getValue(){
     return value;

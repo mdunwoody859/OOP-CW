@@ -13,17 +13,17 @@
 class Card{
 public:
     Card();
-    Card(int _value);
-    Card(std::string _suit);
-    Card(int value, std::string _suit);
-    Card(std::string cardNumber, std::string _suit, int value);
-    Card(std::string cardNumber, std::string _suit, int value, int secondValueForAces);
+    Card(int value);
+    Card(std::string suit);
+    Card(int value, std::string suit);
+    Card(std::string cardNumber, std::string suit, int value);
+    Card(std::string cardNumber, std::string suit, int value, int secondValueForAces);
     int getValue();
     std::string getSuit();
     std::string getValueString();
 private:
-    const int value;
-    const std::string suit;
-    const std::string cardNumber;
-    const int secondValue;
+    int value;
+    std::string suit;
+    std::string cardNumber;
+    int secondValue;
 };

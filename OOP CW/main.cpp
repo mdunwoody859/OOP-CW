@@ -19,6 +19,8 @@ using namespace std;
 
 int balance = 0;
 vector<Card> playingDeck;
+vector<Card> playerHand;
+vector<Card> dealerHand;
 
 void init(){
     // start by asking to press 1 if they want to play or press 2 to access settings
@@ -67,6 +69,18 @@ int displayLogo(){
     return choice;
 }
 
+void dealCardToPlayer(){
+    playingDeck.back();
+    playerHand.push_back(playingDeck.back());//Gives the player the card at the end of the deck
+    playingDeck.pop_back();//Removes that card from the playingDeck
+}
+
+void dealCardToDealer(){
+    playingDeck.back();
+    dealerHand.push_back(playingDeck.back());//Gives the dealer the card at the end of the deck
+    playingDeck.pop_back();//Removes that card from the playingDeck
+}
+
 void initializeGame(){
     cout << "How much money do you have to play with?"<<endl;
     try {
@@ -75,10 +89,17 @@ void initializeGame(){
         cout << "Whoa! That's not a number!"<<endl;
         initializeGame();
     }
+    cout << "Shuffling..."<<endl;
     playingDeck = Deck::setupDeck();
-    for (int i = 0; i < sizeof(playingDeck); i++) {
-        cout << playingDeck[i].getValue() << " "<<playingDeck[i].getSuit();
-    }
+    dealCardToPlayer();
+    dealCardToDealer();
+    dealCardToPlayer();
+    dealCardToDealer();
+    cout << endl << "Your hand:\n"<<playerHand[0].getValueString() << " of "<<playerHand[0].getSuit()<<endl<<playerHand[1].getValueString()<<" of "<< playerHand[1].getSuit();
+    
+    cout << endl << "Dealer hand:\n"<<dealerHand[0].getValueString() << " of "<<dealerHand[0].getSuit()<<endl<<dealerHand[1].getValueString()<<" of "<< dealerHand[1].getSuit()<<endl;//HIDE SECOND CARD!!
+    //Give a card to player then a card to dealer, then a second card to player then second to dealer. Hide the dealer's second card. Deal by popping off vector - dealing as if you're taking a card off the top/bottom of the deck. Maybe create Hand class?
+    
 }
 
 void configureSettings(){

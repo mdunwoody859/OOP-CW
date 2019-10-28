@@ -13,6 +13,8 @@
 #include <vector>
 #include <map>
 #include <algorithm>
+#include <array>
+#include <random>
 
 using namespace std;
 typedef enum {CLUBS, DIAMONDS, HEARTS, SPADES} SUITES;
@@ -39,16 +41,18 @@ vector<Card> Deck::setupDeck(){
     numberValues["QUEEN"] = 10;
     numberValues["KING"] = 10;
     
-    string suites[4] = {"CLUBS", "DIAMONDS", "HEARTS", "SPADES"};
-    for (int i = 0; i < sizeof(suites); i++) {
-        Card temp = Card("ACE", suites[i], 1, 11);
+    string suites[4] = {"SPADES","CLUBS", "DIAMONDS", "HEARTS"};
+    for (string suite : suites){
+        Card temp = Card("ACE", suite, 1, 11);
         deck.push_back(temp);//adds ace to deck
-        map<string, int>::iterator it = numberValues.begin();
-        while (it != numberValues.end()) {
-            Card temp = Card(it->first, suites[i], it->second);
+        temp.~Card();
+        for (map<string, int>::iterator it = numberValues.begin(); it != numberValues.end(); it++) {
+            Card temp = Card(it->first, suite, it->second);
             deck.push_back(temp);
+            temp.~Card();
         }
     }
+    std::shuffle(begin(deck), end(deck), default_random_engine());
     return deck;
 }
 
