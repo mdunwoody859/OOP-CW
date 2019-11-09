@@ -19,6 +19,7 @@ public:
     Card(std::string cardNumber, std::string suit, int value);
     Card(std::string cardNumber, std::string suit, int value, int secondValueForAces);
     int getValue();
+    int getSecondValue();
     std::string getSuit();
     std::string getValueString();
 private:

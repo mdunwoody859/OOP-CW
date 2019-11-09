@@ -25,6 +25,10 @@ Card::Card(string cardNumber, string suit, int value, int secondValue)
 int Card::getValue(){
     return value;
 }
+
+int Card::getSecondValue(){
+    return secondValue;
+}
 string Card::getSuit(){
     return suit;
 }

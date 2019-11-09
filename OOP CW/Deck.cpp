@@ -22,7 +22,11 @@ typedef enum {ACE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, Q
 
 Deck::Deck(){}
 Deck::Deck(int mode){}
+default_random_engine Deck::engine(std::random_device{}());
 
+std::default_random_engine Deck::getRandomEngine(){
+    return engine;
+}
 vector<Card> Deck::setupDeck(){
     //for each SUITE, create an ace and then a card of each NUMBERS value
     vector<Card> deck;
@@ -52,7 +56,7 @@ vector<Card> Deck::setupDeck(){
             temp.~Card();
         }
     }
-    std::shuffle(begin(deck), end(deck), default_random_engine());
+    std::shuffle(begin(deck), end(deck), getRandomEngine());
     return deck;
 }
 

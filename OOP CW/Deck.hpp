@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <string>
+#include <random>
 #include "Card.hpp"
 
 class Deck{
@@ -17,4 +18,7 @@ public:
     Deck();
     Deck(int mode);
     static std::vector<Card> setupDeck();
+    static std::default_random_engine getRandomEngine();
+private:
+    static std::default_random_engine engine;
 };

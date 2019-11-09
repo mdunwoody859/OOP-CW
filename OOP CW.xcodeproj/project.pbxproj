@@ -10,6 +10,7 @@
 		5450245A2365E56B0088FB4A /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 545024592365E56B0088FB4A /* main.cpp */; };
 		545024622365F47F0088FB4A /* Card.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 545024602365F47F0088FB4A /* Card.cpp */; };
 		5450246523663B410088FB4A /* Deck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5450246323663B410088FB4A /* Deck.cpp */; };
+		54DAB0FA2371E6B10009EE8F /* Hand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 54DAB0F82371E6B10009EE8F /* Hand.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -45,6 +46,8 @@
 		545024612365F47F0088FB4A /* Card.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Card.hpp; sourceTree = "<group>"; };
 		5450246323663B410088FB4A /* Deck.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Deck.cpp; sourceTree = "<group>"; };
 		5450246423663B410088FB4A /* Deck.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Deck.hpp; sourceTree = "<group>"; };
+		54DAB0F82371E6B10009EE8F /* Hand.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Hand.cpp; sourceTree = "<group>"; };
+		54DAB0F92371E6B10009EE8F /* Hand.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Hand.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,6 +85,8 @@
 				545024612365F47F0088FB4A /* Card.hpp */,
 				5450246323663B410088FB4A /* Deck.cpp */,
 				5450246423663B410088FB4A /* Deck.hpp */,
+				54DAB0F82371E6B10009EE8F /* Hand.cpp */,
+				54DAB0F92371E6B10009EE8F /* Hand.hpp */,
 			);
 			path = "OOP CW";
 			sourceTree = "<group>";
@@ -144,6 +149,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				54DAB0FA2371E6B10009EE8F /* Hand.cpp in Sources */,
 				5450246523663B410088FB4A /* Deck.cpp in Sources */,
 				5450245A2365E56B0088FB4A /* main.cpp in Sources */,
 				545024622365F47F0088FB4A /* Card.cpp in Sources */,
