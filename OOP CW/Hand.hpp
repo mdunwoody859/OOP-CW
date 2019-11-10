@@ -19,11 +19,11 @@ public:
     bool isPlayer();
     void clear();
     void dealCard(Card cardBeingDealt);
-    void displayHand(bool player);
+    void displayHand(bool player, bool hide);
     void calculateHandValue();
-    void runNaturalBlackjack();
     bool checkBust();
-    void displayTopCard();//Grabs the card from top of stack - the last one which was dealt
+    bool checkForNaturals();
+    void displayTopCard(bool player);//Grabs the card from top of stack - the last one which was dealt
     int getFirstValue();
     int getSecondValue();
 private:

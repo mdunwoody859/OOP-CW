@@ -31,8 +31,13 @@ int Hand::getSecondValue(){
     return value[1];
 }
 
-void Hand::displayTopCard(){
-    cout << "You were dealt the " << cards.back().getValueString() << " of " << cards.back().getSuit() << endl;
+void Hand::displayTopCard(bool player){
+    if (player){
+        cout << "You were dealt the " << cards.back().getValueString() << " of " << cards.back().getSuit() << endl;
+    }
+    else {
+        cout << "The dealer was dealt the " << cards.back().getValueString() << " of " << cards.back().getSuit() << endl;
+    }
 }
 
 void Hand::dealCard(Card cardBeingDealt){
@@ -60,11 +65,15 @@ bool Hand::checkBust(){
     return isBust;
 }
 
-void Hand::runNaturalBlackjack(){
-    cout << "The dealer has a natural blackjack."<<endl;
+bool Hand::checkForNaturals(){
+    calculateHandValue();
+    if (getFirstValue() == 21 || getSecondValue() == 21) {
+        return true;
+    }
+    else return false;
 }
 
-void Hand::displayHand(bool isPlayer){
+void Hand::displayHand(bool isPlayer, bool hideTopCard){
     
     calculateHandValue();//Calculates the hand's value for the player or dealer hand
     
@@ -81,8 +90,24 @@ void Hand::displayHand(bool isPlayer){
         }
     }
     else{//If the hand belongs to the dealer
-        if (cards.size() == 2) {//The dealer's second card is always face down
-            cout << endl << "Dealer hand:\n"<<cards[0].getValueString() << " of "<<cards[0].getSuit()<<endl<<"The dealer's second card is face-down"<<endl;//dealerHand[1] is hidden
+        if (cards.size() == 2) {
+            if (hideTopCard) {
+                //The dealer's second card is always face down at first
+                cout << endl << "Dealer hand:\n"<<cards[0].getValueString() << " of "<<cards[0].getSuit()<<endl<<"The dealer's second card is face-down"<<endl;//dealerHand[1] is hidden
+            }
+            else {
+                cout << endl << "Dealer hand:"<<endl;
+                for (int i = 0; i < cards.size(); i++) {
+                    cout << cards[i].getValueString() << " of " <<cards[i].getSuit()<<endl;
+                }
+                if (*value == *(value + 1)) {
+                    cout << "Total hand value:\t" << *value << endl;
+                }
+                else{
+                    cout << "Total hand value:\t" << *value << " or " << *(value+1) << endl;
+                }
+            }
+            
             // Check for naturals - 10 card + ace.
             // If shown dealer card is a ten card or ace, they check their other card to see if they have a natural.
             // If so, collect all bets of players that do not have naturals.
@@ -95,12 +120,22 @@ void Hand::displayHand(bool isPlayer){
                     cout << "The dealer does not have blackjack."<<endl;
                 }
                 else {
-                    runNaturalBlackjack();
+                    cout << "The dealer has blackjack!"<<endl;//After here, main class continues
                 }
             }
         }
         else {
             //In here goes any logic for displaying the dealer hand if they have 'hit'
+            cout << endl << "Dealer hand:"<<endl;
+            for (int i = 0; i < cards.size(); i++) {
+                cout << cards[i].getValueString() << " of " <<cards[i].getSuit()<<endl;
+            }
+            if (*value == *(value + 1)) {
+                cout << "Total hand value:\t" << *value << endl;
+            }
+            else{
+                cout << "Total hand value:\t" << *value << " or " << *(value+1) << endl;
+            }
         }
     }
 }
