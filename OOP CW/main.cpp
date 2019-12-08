@@ -11,6 +11,7 @@
 #include <iterator>
 #include <map>
 #include <algorithm>
+#include <fstream>
 
 #include "Deck.hpp"
 #include "Card.hpp"
@@ -19,11 +20,13 @@
 using namespace std;
 
 float balance = 0;
+bool handInPlay = true;//control boolean used to make play stop if a hit makes a player bust
 float bet = 0;
 
 vector<Card> playingDeck;
 Hand playerHandObj = Hand(true);//true as it is a player hand
 Hand dealerHandObj = Hand(false);//false as it is a dealer hand
+void mainMenu();
 
 void setBalance(){
     cout << "How much money do you have to play with?"<<endl;
@@ -38,12 +41,13 @@ void setRoundBet(){//
     cout << "How much money do you wish to bet on this round?"<<endl;
     try {
         cin >> bet;
+        if (bet > balance) {
+            cout << "You cannot bet more than your balance!"<< " ( £"<<balance<<")"<<endl;
+            setRoundBet();
+        }
+        balance -= bet;
     }catch(exception ex){
         cout << "Whoa! That's not a number!"<<endl;
-        setRoundBet();
-    }
-    if (bet > balance) {
-        cout << "You cannot bet more than your balance!"<<endl;
         setRoundBet();
     }
     // Player sees the suit and value of both their card and the total value of their hand
@@ -108,21 +112,27 @@ void setupGame(){//Method for setting up the beginning of a game
 
 void clearHands(){
     //Cleanup method to destroy the cards in each player's hand. These cards will not be added back to the deck and are instead 'discarded'. The players will be dealt cards again if they wish to play again, but it will be from an ever-diminishing deck as it would be with a real-life deck of cards.
-    playerHandObj.~Hand();
-    dealerHandObj.~Hand();
+    playerHandObj.clearCards();
+    dealerHandObj.clearCards();
+    handInPlay = false;
+}
+
+void displayBalance(){
+    cout << "Your current balance is £"<< balance << endl;
 }
 
 void playerLoses(){
+    handInPlay = false;
     clearHands();
-    balance -= bet;
     if (balance > 0) {
-        cout << "You lose this round. You have lost £"<<bet<<"\nYour current balance is "<<balance<< endl;
+        cout << "You lose this round. You have lost £"<<bet<<endl;
+        displayBalance();
         //deal them cards again - runGame runs. Maybe run a clearHand method now?
         //prompt for another round?
     }
     else {//If the player loses all their money
         int i = 0;
-        cout << "Thank you for playing! Unfortunately you have lost all your money.\nPlease press 1 if you wish to play again."<<endl;
+        cout << "Thank you for playing! Unfortunately you have lost all your money.\nPlease press 1 if you wish to return to the main menu."<<endl;
         try {
             cin >> i;
         } catch (exception e) {
@@ -130,32 +140,41 @@ void playerLoses(){
         }
         if (i == 1) {
             cout << "\n\n\n\n\n"<<endl;
-            setBalance();//Make them set a new balance before runGame takes over and prompts bets
+            mainMenu();//Make them set a new balance before runGame takes over and prompts bets
         }
-        exitApplication();
+        else {
+            exitApplication();
+        }
     }
 }
 void runDraw(){
+    handInPlay = false;
     clearHands();
     balance += bet;
-    bet = 0;
     cout << "This round ended in a draw"<<endl;
-    
+    displayBalance();
+    bet = 0;
 }
 void playerWins(){
+    handInPlay = false;
     clearHands();
     float winnings = 2* bet;
     balance += winnings;
     bet = 0;
     cout << "Congatulations! You have won this round!" <<endl;
+    displayBalance();
 }
 void hitPlayer(){
     dealCardToPlayer();//Deal card to player and check if the player is bust
     playerHandObj.displayTopCard(true);
     playerHandObj.calculateHandValue();
+    playerHandObj.displayHand(1, 0);
     if (playerHandObj.checkBust()){
         cout << "Oh no! you've gone bust"<<endl;
-        playerLoses();
+        handInPlay = false;
+    }
+    if (playerHandObj.getFirstValue() == 21 || playerHandObj.getSecondValue() == 21) {
+        handInPlay = false;
     }
 }
 
@@ -166,7 +185,7 @@ void hitDealer(){
     dealerHandObj.calculateHandValue();
     if (dealerHandObj.checkBust()){
         cout << "Congratulations! The dealer has gone bust"<<endl;
-        playerWins();
+        handInPlay = false;
     }
 }
 
@@ -176,55 +195,29 @@ void revealSecondCard(){
 }
 
 bool dealerPlay(){
-    if (dealerHandObj.getFirstValue() < 17 && dealerHandObj.getSecondValue() < 17) {
+    int hand1 = dealerHandObj.getFirstValue();
+    int hand2 = dealerHandObj.getSecondValue();
+    if (hand1 < 17 || hand2 < 17) {
         //Next up is programming the dealer 'AI'
         //if both are less than 17, dealer must hit
         hitDealer();
+        if (hand1 > 21 && hand2 > 21) {
+            return false;
+        }
         return true;
     }
-    else {
-        return false;
-    }
+    return false;
 }
 
 void determineWinner(int p1, int p2, int d1, int d2){
-    if (p1 == p2 && d1 == d2) {//no aces
-        if (p1 > d1) {
-            playerWins();
-        }
-        else if (d1 > p1) {
-            playerLoses();
-        }
-        else {
-            runDraw();
-        }
+    if (p1 > 21 && p2 > 21) {
+        playerLoses();
     }
-    if (p1 != p2 && d1 == d2) {//if player has an ace and dealer does not
-        if (p2 > 21){//player's 11 score is bust
-            if (p1 > d1) {
-                playerWins();
-            }
-            else if (d1 > p1){
-                playerLoses();
-            }
-            else {
-                runDraw();
-            }
-        }
-        else {//p2 not bust, therefore we know it's a better hand than p1 where ace=1
-            if (p2 > d1){
-                playerWins();//player is not bust so if they win either hand they win since d1==d2
-            }
-            else if (p2 < d1) {
-                playerLoses();
-            }
-            else {
-                runDraw();
-            }
-        }
+    if (d1 > 21 && d2 > 21) {
+        playerWins();
     }
-    if (p1 == p2 && d1 != d2) {//if dealer has an ace and player does not
-        if (d2 > 21) {//if dealer is bust with 11 hand
+    else {
+        if (p1 == p2 && d1 == d2) {//no aces
             if (p1 > d1) {
                 playerWins();
             }
@@ -235,61 +228,98 @@ void determineWinner(int p1, int p2, int d1, int d2){
                 runDraw();
             }
         }
-        else {//d2 is not bust, therefore will be a better hand than d1
-            if (p1 > d2) {
-                playerWins();
+        if (p1 != p2 && d1 == d2) {//if player has an ace and dealer does not
+            if (p2 > 21){//player's 11 score is bust
+                if (p1 > d1) {
+                    playerWins();
+                }
+                else if (d1 > p1){
+                    playerLoses();
+                }
+                else {
+                    runDraw();
+                }
             }
-            else if (d2 > p1){
-                playerWins();
-            }
-            else {
-                runDraw();
-            }
-        }
-    }
-    if (p1 != p2 && d1 != d2) {//both player and dealer have aces
-        if (p2 >21 && d2 > 21) {//Both players 11 value hand would be bust
-            if (p1 > d1) {
-                playerWins();
-            }
-            else if (p1 < d1) {
-                playerLoses();
-            }
-            else {
-                runDraw();
-            }
-        }
-        else if (p2 > 21){//p2 is bust, d2 not
-            if (p1 > d2){//d2 not bust so will be a better hand than d1
-                playerWins();
-            }
-            else if (p1 < d2){
-                playerLoses();
-            }
-            else {
-                runDraw();
+            else {//p2 not bust, therefore we know it's a better hand than p1 where ace=1
+                if (p2 > d1){
+                    playerWins();//player is not bust so if they win either hand they win since d1==d2
+                }
+                else if (p2 < d1) {
+                    playerLoses();
+                }
+                else {
+                    runDraw();
+                }
             }
         }
-        else if (d2 > 21){//d2 bust, p2 not
-            if (p2 > d1) {
-                playerWins();
+        if (p1 == p2 && d1 != d2) {//if dealer has an ace and player does not
+            if (d2 > 21) {//if dealer is bust with 11 hand
+                if (p1 > d1) {
+                    playerWins();
+                }
+                else if (d1 > p1) {
+                    playerLoses();
+                }
+                else {
+                    runDraw();
+                }
             }
-            else if (p2 < d1){
-                playerLoses();
-            }
-            else {
-                runDraw();
+            else {//d2 is not bust, therefore will be a better hand than d1
+                if (p1 > d2) {
+                    playerWins();
+                }
+                else if (d2 > p1){
+                    playerWins();
+                }
+                else {
+                    runDraw();
+                }
             }
         }
-        else {//Neither player bust, therefore p2 > p1 && d2 > d1
-            if (p2 > d2) {
-                playerWins();
+        if (p1 != p2 && d1 != d2) {//both player and dealer have aces
+            if (p2 >21 && d2 > 21) {//Both players 11 value hand would be bust
+                if (p1 > d1) {
+                    playerWins();
+                }
+                else if (p1 < d1) {
+                    playerLoses();
+                }
+                else {
+                    runDraw();
+                }
             }
-            else if (p2 < d2){
-                playerLoses();
+            else if (p2 > 21){//p2 is bust, d2 not
+                if (p1 > d2){//d2 not bust so will be a better hand than d1
+                    playerWins();
+                }
+                else if (p1 < d2){
+                    playerLoses();
+                }
+                else {
+                    runDraw();
+                }
             }
-            else {
-                runDraw();
+            else if (d2 > 21){//d2 bust, p2 not
+                if (p2 > d1) {
+                    playerWins();
+                }
+                else if (p2 < d1){
+                    playerLoses();
+                }
+                else {
+                    runDraw();
+                }
+            }
+            else {//Neither player bust, therefore p2 > p1 && d2 > d1
+                if (p2 > d2) {
+                    playerWins();
+                }
+                else if (p2 < d2){
+                    playerLoses();
+                }
+                else {
+                    runDraw();
+                }
             }
         }
     }
@@ -300,18 +330,23 @@ void standPlayer(){
     playerHandObj.calculateHandValue();
     int playerFirstValue = playerHandObj.getFirstValue();
     int playerSecondValue = playerHandObj.getSecondValue();
-    //First, the dealer flips his covered card
-    revealSecondCard();
-    bool dealerIsPlaying = true;
-    while (dealerIsPlaying) {
-        dealerIsPlaying = dealerPlay();//return true on hitDealer
-    }//only breaks when the dealer is standing
-    dealerHandObj.calculateHandValue();
-    int dealerFirstValue = dealerHandObj.getFirstValue();
-    int dealerSecondValue = dealerHandObj.getSecondValue();
-    //following if statements determine winner
-    determineWinner(playerFirstValue,playerSecondValue,dealerFirstValue,dealerSecondValue);
-    //first value has ace as 1, second as 11
+    if (playerFirstValue > 21 && playerSecondValue > 21) {
+        playerLoses();
+    }
+    else {
+        //First, the dealer flips his covered card
+        revealSecondCard();
+        bool dealerIsPlaying = true;
+        while (dealerIsPlaying) {
+            dealerIsPlaying = dealerPlay();//return true on hitDealer
+        }//only breaks when the dealer is standing
+        dealerHandObj.calculateHandValue();
+        int dealerFirstValue = dealerHandObj.getFirstValue();
+        int dealerSecondValue = dealerHandObj.getSecondValue();
+        //following if statements determine winner
+        determineWinner(playerFirstValue,playerSecondValue,dealerFirstValue,dealerSecondValue);
+            //first value has ace as 1, second as 11
+    }
 }
 
 int makeChoice(){
@@ -333,6 +368,7 @@ int makeChoice(){
 }
 
 void runChoices(){
+    handInPlay = true;
     int choice;
     do{
         choice = makeChoice();
@@ -344,7 +380,10 @@ void runChoices(){
             case 2: standPlayer();break;
             default: exitApplication();break;
         }
-    }while (choice == 1);//Repeat this until the player stands
+    }while (choice == 1 && handInPlay);//Repeat this until the player stands
+    if (choice == 1 && !handInPlay) {
+        standPlayer();//if the player has hit and the hand is no longer in play, they did not stand but have reached 21
+    }
 }
 
 void runNaturals(){
@@ -385,7 +424,29 @@ void initializeGame(){
 }
 
 void configureSettings(){
-    
+    int noOfDecks;
+    cout << "\n\nHow many decks do you want to play with?\nEnter a value between 1 and 10" << endl;
+    try {
+        cin >> noOfDecks;
+    } catch (exception) {
+        cout << "Please enter a numeric value between 1 and 10" << endl;
+        configureSettings();
+    }
+    if (!(noOfDecks >= 1 && noOfDecks <= 10)) {
+        cout << "Please enter a numeric value between 1 and 10" << endl;
+        configureSettings();
+    }
+    string filepath = "settings.txt";
+    fstream myFile;
+    myFile.open(filepath);
+    if (myFile.is_open()) {
+        myFile << noOfDecks;
+    }
+    else {
+        cout << "an error has occurred. Please check that settings.txt is in the project folder" << endl;
+    }
+    myFile.close();
+    mainMenu();
 }
 
 void runGame(){
@@ -410,6 +471,10 @@ void runGame(){
 
 int main(int argc, const char * argv[]) {
     // insert code here...
+    mainMenu();
+}
+
+void mainMenu(){
     int mode = displayLogo();
     switch (mode){
         case 1:
@@ -421,7 +486,6 @@ int main(int argc, const char * argv[]) {
         default:
             exitApplication();break;
     }
-    return 0;
 }
 //Clear hands after rounds.
 //Prompt for playing another round, then runGame() upon end of last round

@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <array>
 #include <random>
+#include <fstream>
 
 using namespace std;
 typedef enum {CLUBS, DIAMONDS, HEARTS, SPADES} SUITES;
@@ -30,6 +31,20 @@ std::default_random_engine Deck::getRandomEngine(){
 vector<Card> Deck::setupDeck(){
     //for each SUITE, create an ace and then a card of each NUMBERS value
     vector<Card> deck;
+    string filepath = "settings.txt";
+    //If they're using >1 deck, append playingDeck by the amount of decks minus 1
+    fstream myFile;
+    myFile.open(filepath);
+    int numberOfDecks = 1;
+    int line;
+    if (myFile.is_open())
+    {
+        while (myFile >> line) {
+            numberOfDecks = line;
+        }
+    }
+    else numberOfDecks = 1;
+    myFile.close();
     
     map<string, int> numberValues;
     numberValues["TWO"] = 2;
@@ -46,14 +61,17 @@ vector<Card> Deck::setupDeck(){
     numberValues["KING"] = 10;
     
     string suites[4] = {"SPADES","CLUBS", "DIAMONDS", "HEARTS"};
-    for (string suite : suites){
-        Card temp = Card("ACE", suite, 1, 11);
-        deck.push_back(temp);//adds ace to deck
-        temp.~Card();
-        for (map<string, int>::iterator it = numberValues.begin(); it != numberValues.end(); it++) {
-            Card temp = Card(it->first, suite, it->second);
-            deck.push_back(temp);
+    
+    for (int i = 0; i < numberOfDecks; i++) {
+        for (string suite : suites){
+            Card temp = Card("ACE", suite, 1, 11);
+            deck.push_back(temp);//adds ace to deck
             temp.~Card();
+            for (map<string, int>::iterator it = numberValues.begin(); it != numberValues.end(); it++) {
+                Card temp = Card(it->first, suite, it->second);
+                deck.push_back(temp);
+                temp.~Card();
+            }
         }
     }
     std::shuffle(begin(deck), end(deck), getRandomEngine());

@@ -24,6 +24,7 @@ public:
     bool checkBust();
     bool checkForNaturals();
     void displayTopCard(bool player);//Grabs the card from top of stack - the last one which was dealt
+    void clearCards();
     int getFirstValue();
     int getSecondValue();
 private:

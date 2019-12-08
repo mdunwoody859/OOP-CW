@@ -57,6 +57,11 @@ void Hand::calculateHandValue(){
     *(value + 1) = total2;
 }
 
+void Hand::clearCards(){
+    cards.clear();
+    cards.clear();
+}
+
 bool Hand::checkBust(){
     bool isBust = false;
     if (*value > 21 && *(value + 1) > 21) {
@@ -114,7 +119,7 @@ void Hand::displayHand(bool isPlayer, bool hideTopCard){
             // If player has it and dealer does not, player receives 1.5x bet
             // If both have it, player gets their bet back but no winnings.
             // If neither have it, begin play
-            if (cards[0].getValue() >= 10 || cards[0].getSecondValue() >= 10) {//if first card is ace or 10
+            if ((cards[0].getValue() >= 10 || cards[0].getSecondValue() >= 10) && hideTopCard) {//if first card is ace or 10
                 cout << "The dealer is checking for blackjack..." <<endl;
                 if (!(*value == 21 || *(value+1) == 21)) {
                     cout << "The dealer does not have blackjack."<<endl;

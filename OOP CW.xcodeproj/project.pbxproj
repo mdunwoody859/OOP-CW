@@ -48,6 +48,7 @@
 		5450246423663B410088FB4A /* Deck.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Deck.hpp; sourceTree = "<group>"; };
 		54DAB0F82371E6B10009EE8F /* Hand.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Hand.cpp; sourceTree = "<group>"; };
 		54DAB0F92371E6B10009EE8F /* Hand.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Hand.hpp; sourceTree = "<group>"; };
+		54F7AE23239D5E6B0083493B /* settings.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = settings.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +81,7 @@
 		545024582365E56B0088FB4A /* OOP CW */ = {
 			isa = PBXGroup;
 			children = (
+				54F7AE23239D5E6B0083493B /* settings.txt */,
 				545024592365E56B0088FB4A /* main.cpp */,
 				545024602365F47F0088FB4A /* Card.cpp */,
 				545024612365F47F0088FB4A /* Card.hpp */,
