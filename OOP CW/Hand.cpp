@@ -46,7 +46,7 @@ void Hand::dealCard(Card cardBeingDealt){
 void Hand::calculateHandValue(){
     int total1 = 0;
     int total2 = 0;
-    for (int i = 0; i < cards.size(); i++) {
+    for (size_t i = 0; i < cards.size(); i++) {
         total1 += cards[i].getValue();
         if (cards[i].getValueString() == "ACE") {
             total2 += cards[i].getSecondValue();
@@ -84,7 +84,7 @@ void Hand::displayHand(bool isPlayer, bool hideTopCard){
     
     if (isPlayer) {//If the hand belongs to the player...
         cout << endl << "Your hand:"<<endl;
-        for (int i = 0; i < cards.size(); i++) {
+        for (size_t i = 0; i < cards.size(); i++) {
             cout << cards[i].getValueString() << " of " <<cards[i].getSuit()<<endl;
         }
         if (*value == *(value + 1)) {
@@ -102,7 +102,7 @@ void Hand::displayHand(bool isPlayer, bool hideTopCard){
             }
             else {
                 cout << endl << "Dealer hand:"<<endl;
-                for (int i = 0; i < cards.size(); i++) {
+                for (size_t i = 0; i < cards.size(); i++) {
                     cout << cards[i].getValueString() << " of " <<cards[i].getSuit()<<endl;
                 }
                 if (*value == *(value + 1)) {
@@ -132,7 +132,7 @@ void Hand::displayHand(bool isPlayer, bool hideTopCard){
         else {
             //In here goes any logic for displaying the dealer hand if they have 'hit'
             cout << endl << "Dealer hand:"<<endl;
-            for (int i = 0; i < cards.size(); i++) {
+            for (size_t i = 0; i < cards.size(); i++) {
                 cout << cards[i].getValueString() << " of " <<cards[i].getSuit()<<endl;
             }
             if (*value == *(value + 1)) {

@@ -42,7 +42,7 @@ void setRoundBet(){//
     try {
         cin >> bet;
         if (bet > balance) {
-            cout << "You cannot bet more than your balance!"<< " ( £"<<balance<<")"<<endl;
+            cout << "You cannot bet more than your balance!"<< " ( $"<<balance<<")"<<endl;
             setRoundBet();
         }
         balance -= bet;
@@ -118,14 +118,14 @@ void clearHands(){
 }
 
 void displayBalance(){
-    cout << "Your current balance is £"<< balance << endl;
+    cout << "Your current balance is $"<< balance << endl;
 }
 
 void playerLoses(){
     handInPlay = false;
     clearHands();
     if (balance > 0) {
-        cout << "You lose this round. You have lost £"<<bet<<endl;
+        cout << "You lose this round. You have lost $"<<bet<<endl;
         displayBalance();
         //deal them cards again - runGame runs. Maybe run a clearHand method now?
         //prompt for another round?
@@ -386,7 +386,7 @@ void runChoices(){
     }
 }
 
-void runNaturals(){
+bool runNaturals(){
     bool playerNatural = playerHandObj.checkForNaturals();
     bool dealerNatural = dealerHandObj.checkForNaturals();
     if (dealerNatural) {
@@ -402,6 +402,10 @@ void runNaturals(){
         cout << "You have blackjack!"<<endl;
         playerWins();
     }
+	if (playerNatural || dealerNatural){
+		return true;
+	}
+	return false;
 }
 
 void initializeGame(){
@@ -418,9 +422,10 @@ void initializeGame(){
     setRoundBet();
     //Give a card to player then a card to dealer, then a second card to player then second to dealer. Hide the dealer's second card. Deal by popping off vector - dealing as if you're taking a card off the top/bottom of the deck. Hand class has been created for this
     setupGame();
-    runNaturals();
+    bool naturals = runNaturals();
     //if both have naturals, cout "but so do you!"
-    runChoices();
+    if (!naturals)
+		runChoices();
 }
 
 void configureSettings(){
