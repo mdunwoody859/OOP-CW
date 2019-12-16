@@ -45,7 +45,9 @@ void setRoundBet(){//
             cout << "You cannot bet more than your balance!"<< " ( $"<<balance<<")"<<endl;
             setRoundBet();
         }
-        balance -= bet;
+		else {
+			balance -= bet;
+		}
     }catch(exception ex){
         cout << "Whoa! That's not a number!"<<endl;
         setRoundBet();
